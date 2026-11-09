@@ -22,6 +22,14 @@ Wait for the backend to finish migrations, then open:
 
 To stop: `docker compose down`.
 
+## Test instructions
+
+You need the .NET 10 SDK installed to run the tests. The test project uses Testcontainers with a real PostgreSQL instance, so Docker must be running.
+
+```bash
+dotnet test
+```
+
 ## API
 
 Base URL: `http://localhost:8080`. All requests/responses are JSON.
@@ -62,11 +70,11 @@ All seat decisions for a class are serialised with a PostgreSQL transaction and 
 
 ### Admin verification password
 
-There is no student login, but creating classes is an admin action and is protected by a verification password:
+There is no student login, but creating classes is an admin action. The backend optionally accepts a verification password in the `X-Admin-Password` header on `POST /classes`. If provided, the password is verified against the hash stored in the `AdminCredentials` table; if omitted, the request proceeds without admin protection. This optional header was added as an extra security layer and does not affect the API contract.
 
 - The password is stored only as a PBKDF2‑SHA256 hash in the `AdminCredentials` table; the plain text is never stored or returned.
 - On the first startup the row is seeded from `ADMIN_PASSWORD` (default `ChangeMe-Admin1`). Once a password exists it is left untouched on later startups, so a changed password survives restarts.
-- There is no session: the Admin tab asks for the password, and the backend requires it in the `X-Admin-Password` header on `POST /classes`. Only someone who knows the password can create classes.
+- There is no session: the Admin tab asks for the password, and the backend optionally requires it in the `X-Admin-Password` header on `POST /classes`. Only someone who knows the password can create classes with admin protection.
 - Changing the password (`POST /admin/password`) requires the current password, so no other user can modify it.
 - The Admin tab shows the demo password for the reader. In a real deployment that value would never be displayed; it appears here only because this project is a demo.
 

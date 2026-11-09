@@ -8,10 +8,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      # Host port 5433 avoids clashing with a local PostgreSQL on 5432.
       - "5433:5432"
     volumes:
-      # PostgreSQL 18 stores its cluster under /var/lib/postgresql.
       - postgres_data:/var/lib/postgresql
     healthcheck:
       test:
@@ -32,7 +30,7 @@ services:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${POSTGRES_DB:-school_admission};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}"
-      HOLD_DURATION_SECONDS: ${HOLD_DURATION_SECONDS:-60}
+      HOLD_DURATION_SECONDS: ${HOLD_DURATION_SECONDS:-600}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ChangeMe-Admin1}
     ports:
       - "8080:8080"
@@ -47,7 +45,8 @@ services:
       dockerfile: Dockerfile
     environment:
       VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
-      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - static-files:/usr/share/nginx/html
     expose:
       - "5173"
     depends_on:
@@ -60,9 +59,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5173:80"
+    volumes:
+      - static-files:/usr/share/nginx/html
     depends_on:
       - frontend
     restart: unless-stopped
 
 volumes:
   postgres_data:
+  static-files:

@@ -26,9 +26,11 @@ public class ClassesController : ControllerBase
     [HttpPost("/classes")]
     public async Task<IActionResult> CreateClass(CreateClassRequest request, CancellationToken cancellationToken)
     {
-        var adminPassword = AdminPasswordValidator.Require(Request.Headers[AdminPasswordValidator.HeaderName]);
+        var adminPassword = Request.Headers.TryGetValue(AdminPasswordValidator.HeaderName, out var passwordValues)
+            ? passwordValues.FirstOrDefault()
+            : null;
 
-        if (!await adminService.VerifyPasswordAsync(adminPassword, cancellationToken))
+        if (adminPassword != null && !await adminService.VerifyPasswordAsync(adminPassword, cancellationToken))
         {
             throw new UnauthorizedException("The admin verification password is incorrect.");
         }
@@ -54,6 +56,6 @@ public class ClassesController : ControllerBase
     {
         var studentId = StudentIdValidator.Require(Request.Headers[StudentIdValidator.HeaderName]);
         var result = await holdService.CreateHoldAsync(classId, studentId, cancellationToken);
-        return Ok(result);
+        return CreatedAtAction(nameof(HoldsController.GetHold), new { holdId = result.HoldId }, result);
     }
 }

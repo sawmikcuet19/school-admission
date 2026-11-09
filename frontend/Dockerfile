@@ -1,20 +1,21 @@
 # syntax=docker/dockerfile:1
 
-FROM node:22-alpine
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
 RUN npm install -g pnpm@11.24.0
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .
+RUN pnpm build
 
-# The Vite dev server reads this at startup, so it can be overridden at runtime.
-ENV VITE_API_BASE_URL=http://localhost:8080 \
-    CHOKIDAR_USEPOLLING=true
+FROM nginx:1.27-alpine
 
-EXPOSE 5173
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-CMD ["pnpm", "dev", "--host", "0.0.0.0", "--port", "5173"]
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80

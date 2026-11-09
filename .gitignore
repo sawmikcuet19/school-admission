@@ -1,0 +1,29 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/
+.idea/
+
+# Secrets and local environment files
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+*.log
+TestResults/
+
+# Node / Vite
+**/node_modules/
+**/dist/
+**/dist-ssr/
+*.tsbuildinfo
+
+# Keep the take-home assignment PDF private (see the brief).
+Asst_Software_Engineer_Project_Assignment.pdf

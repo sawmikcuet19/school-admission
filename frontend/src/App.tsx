@@ -62,15 +62,7 @@ export default function App() {
     setApplyingClassId(admissionClass.id);
 
     try {
-      const hold = await api.apply(admissionClass.id, studentId);
-      const expiresAt = new Date(hold.expiresAt).toLocaleTimeString(undefined, {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-
-      toast.success(
-        `Seat held in ${admissionClass.name}. Pay before ${expiresAt} to confirm.`,
-      );
+      await api.apply(admissionClass.id, studentId);
 
       classes.refresh();
       holds.refresh();
@@ -171,7 +163,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-muted/20">
       <header className="border-b bg-background">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 md:flex-row md:items-center md:justify-between md:px-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 py-6 md:flex-row md:items-center md:justify-between md:px-8">
           <div className="flex items-center gap-3">
             <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
               <GraduationCap className="size-6" />

@@ -2,6 +2,12 @@
 
 A full‑stack take‑home assignment for school admissions.
 
+## Author
+
+| Name | Email |
+| ---- | ----- |
+| Sawmik Kumar Paul | sawmik.paul@gmail.com |
+
 ## Quick start (Docker only)
 
 Prerequisites: Docker with the Compose plugin.

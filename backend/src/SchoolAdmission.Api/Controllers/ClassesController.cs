@@ -56,6 +56,6 @@ public class ClassesController : ControllerBase
     {
         var studentId = StudentIdValidator.Require(Request.Headers[StudentIdValidator.HeaderName]);
         var result = await holdService.CreateHoldAsync(classId, studentId, cancellationToken);
-        return CreatedAtAction(nameof(HoldsController.GetHold), new { holdId = result.HoldId }, result);
+        return Created($"/holds/{result.HoldId}", result);
     }
 }
